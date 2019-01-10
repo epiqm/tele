@@ -323,8 +323,11 @@ func (bot *Bot) GetUpdates(lastUpdateId int64) (response GetUpdatesResponse) {
 	}
 
 	bot.SuccessfullRequests++
-
-	bot.LastUpdateId = lastUpdateId
+	var lid int64
+	if len(response.Result) >= 1 {
+		lid = response.Result[0].UpdateId
+		bot.LastUpdateId = lid + 1
+	}
 	return response
 }
 
