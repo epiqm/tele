@@ -17,24 +17,28 @@ package main
 
 import (
     "fmt"
+    "time"
 
-    "github.com/epiqm/tele"
+    "tele"
 )
 
 func main() {
-    bot, err := tele.Create("123:bot-token", "https://api.telegram.org/bot", 0)
+    bot, err := tele.Create("733244606:AAFVKJvc2pnp13Z-CIqd4WjWGD7kLm1oFfY", "https://api.telegram.org/bot", 0)
+    if err != nil {
+        fmt.Println(err.Error())
+    }
 
-    go func() {
+    if err == nil {
         for {
             updates := bot.GetUpdates(bot.LastUpdateId)
             for _, v := range updates.Result {
                 if v.Message.Text == "hi" {
-                    tele.SendMarkdownMessage(v.Message.From.Id, "hello :D")
+                    bot.SendMarkdownMessage(v.Message.From.Id, "hello :D")
                 }
             }
             time.Sleep(2 * time.Second)
         }
-    }()
+    }
 }
 ```
 
