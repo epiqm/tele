@@ -6,7 +6,6 @@ package tele
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/epiqm/seq"
 	"io/ioutil"
@@ -294,9 +293,9 @@ func (c *GetUpdatesResponse) Dump() (s string) {
 	return
 }
 
-func (bot *Bot) GetUpdates(lastUpdateId int64) (response GetUpdatesResponse) {
+func (bot *Bot) GetUpdates() (response GetUpdatesResponse) {
 	newCommand := bot.buildCommand("getUpdates")
-	resp, err := http.Get(fmt.Sprintf("%s?offset=%d", newCommand, lastUpdateId))
+	resp, err := http.Get(fmt.Sprintf("%s?offset=%d", newCommand, bot.LastUpdateId))
 	if err != nil {
 		bot.FailedRequests++
 		if DebugMode {
@@ -346,24 +345,24 @@ type Instances struct {
 
 var BotsInstances Instances
 
-func Create(au string, spawn string, lastUpdateId int64) (bot Bot, err error) {
+func Create(au string, spawn string) (bot Bot) {
 	ausp := fmt.Sprintf("%s%s", au, spawn)
-	bot.Id = seq.Hash(ausp)
+	bot.Id = "m" + seq.HashCut(ausp, 5)
 	bot.Au = au
 	bot.Spawn = spawn
-	bot.LastUpdateId = lastUpdateId
 	bot.Created = time.Now()
 
 	for _, v := range BotsInstances.Bots {
 		if v.Id == bot.Id {
-			err := errors.New("create: bot instance was already created")
-			return bot, err
+			return v
+			//err := errors.New("create: bot instance was already created")
+			//return bot, err
 		}
 	}
 
 	BotsInstances.Bots = append(BotsInstances.Bots, bot)
 
-	return bot, nil
+	return bot
 }
 
 func GetBots() (bots *[]Bot) {
