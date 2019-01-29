@@ -22,22 +22,29 @@ import (
     "tele"
 )
 
+var mBot *tele.Bot // a bot instance
+
 func main() {
-    bot, err := tele.Create("733244606:AAFVKJvc2pnp13Z-CIqd4WjWGD7kLm1oFfY", "https://api.telegram.org/bot", 0)
+    mBot, err := tele.Create("12345:ABCD-EFGH", "https://api.telegram.org/bot")
     if err != nil {
         fmt.Println(err.Error())
+        return
     }
 
-    if err == nil {
-        for {
-            updates := bot.GetUpdates(bot.LastUpdateId)
-            for _, v := range updates.Result {
-                if v.Message.Text == "hi" {
-                    bot.SendMarkdownMessage(v.Message.From.Id, "hello :D")
-                }
+    for {
+        updates := mBot.GetUpdates()
+        for _, v := range updates.Result {
+            if v.Message.Text == "hi" {
+                // reply using markdown
+                mBot.SendMarkdownMessage(v.Message.From.Id, "**hello** :D")
+            } else {
+                // reply using regular message
+                mBot.SendMessage(v.Message.From.Id, "Telegram Bot API is awesome.")
             }
-            time.Sleep(2 * time.Second)
         }
+
+        // a pause before next getUpdates request
+        time.Sleep(2 * time.Second)
     }
 }
 ```

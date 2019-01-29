@@ -6,6 +6,7 @@ package tele
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/epiqm/seq"
 	"io/ioutil"
@@ -345,7 +346,7 @@ type Instances struct {
 
 var BotsInstances Instances
 
-func Create(au string, spawn string) (bot Bot) {
+func Create(au string, spawn string) (bot Bot, err error) {
 	ausp := fmt.Sprintf("%s%s", au, spawn)
 	bot.Id = "m" + seq.HashCut(ausp, 5)
 	bot.Au = au
@@ -354,15 +355,14 @@ func Create(au string, spawn string) (bot Bot) {
 
 	for _, v := range BotsInstances.Bots {
 		if v.Id == bot.Id {
-			return v
-			//err := errors.New("create: bot instance was already created")
-			//return bot, err
+			err := errors.New("create: bot instance was already created")
+			return bot, err
 		}
 	}
 
 	BotsInstances.Bots = append(BotsInstances.Bots, bot)
 
-	return bot
+	return bot, nil
 }
 
 func GetBots() (bots *[]Bot) {

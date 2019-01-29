@@ -8,7 +8,10 @@ import (
 )
 
 func TestCreate(t *testing.T) {
-	bot := tele.Create("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11", "https://api.telegram.org/bot")
+	bot, err := tele.Create("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11", "https://api.telegram.org/bot")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
 
 	if bot.Id != "m02828" {
 		t.Errorf("Failed to create bot instance, got: %s", bot.Id)
@@ -16,7 +19,10 @@ func TestCreate(t *testing.T) {
 }
 
 func ExampleCreate() {
-	bot := tele.Create("1234567:FFF-DEF1234ghIkl-zyx57W2v1u123ew11", "https://api.telegram.org/bot")
+	bot, err := tele.Create("1234567:FFF-DEF1234ghIkl-zyx57W2v1u123ew11", "https://api.telegram.org/bot")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
 	fmt.Println(bot.Id)
 	// Output:
@@ -24,8 +30,8 @@ func ExampleCreate() {
 }
 
 func ExampleGetBots() {
-	_ = tele.Create("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11", "https://api.telegram.org/bot")
-	_ = tele.Create("789101:DEF-GHI1234ghIkl-zyx57W2v1u123ew11", "https://api.telegram.org/bot")
+	_, _ = tele.Create("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11", "https://api.telegram.org/bot")
+	_, _ = tele.Create("789101:DEF-GHI1234ghIkl-zyx57W2v1u123ew11", "https://api.telegram.org/bot")
 	bots := tele.GetBots()
 
 	for _, v := range *bots {
